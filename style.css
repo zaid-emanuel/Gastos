@@ -107,6 +107,36 @@ h1 {
   text-align: right;
 }
 
+.limite-gasto {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.limite-gasto label {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.limite-gasto input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#mensaje-limite {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #2e7d32;
+}
+
+.limite-excedido {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
 .resumen-grafico {
   margin-top: 24px;
 }

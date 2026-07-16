@@ -8,6 +8,8 @@ const listaGastos = document.getElementById('lista-gastos');
 const totalTexto = document.getElementById('total');
 const contenedorGrafica = document.getElementById('grafica-barras');
 const botonesFiltro = document.querySelectorAll('[data-filtro]');
+const inputLimite = document.getElementById('limite');
+const mensajeLimite = document.getElementById('mensaje-limite');
 
 // ===== Estado de la aplicación =====
 let gastos = [];
@@ -47,6 +49,25 @@ function obtenerGastosFiltrados() {
 function calcularTotal(gastosVisibles) {
   const total = gastosVisibles.reduce((suma, gasto) => suma + gasto.monto, 0);
   totalTexto.textContent = `Total: $${total.toFixed(2)}`;
+  return total;
+}
+
+function verificarLimite(totalActual) {
+  const limite = parseFloat(inputLimite.value);
+
+  if (isNaN(limite) || limite <= 0) {
+    mensajeLimite.textContent = '';
+    mensajeLimite.classList.remove('limite-excedido');
+    return;
+  }
+
+  if (totalActual > limite) {
+    mensajeLimite.textContent = `Has excedido tu límite mensual por $${(totalActual - limite).toFixed(2)}`;
+    mensajeLimite.classList.add('limite-excedido');
+  } else {
+    mensajeLimite.textContent = `Disponible: $${(limite - totalActual).toFixed(2)}`;
+    mensajeLimite.classList.remove('limite-excedido');
+  }
 }
 
 function renderizarGrafica(gastosVisibles) {
@@ -92,8 +113,9 @@ function renderizarGastos() {
     listaGastos.appendChild(li);
   });
 
-  calcularTotal(gastosVisibles);
+  const total = calcularTotal(gastosVisibles);
   renderizarGrafica(gastosVisibles);
+  verificarLimite(total);
 }
 
 function agregarGasto() {
@@ -120,4 +142,10 @@ botonesFiltro.forEach((boton) => {
     filtroActivo = boton.dataset.filtro;
     renderizarGastos();
   });
+});
+
+inputLimite.addEventListener('input', () => {
+  const gastosVisibles = obtenerGastosFiltrados();
+  const total = calcularTotal(gastosVisibles);
+  verificarLimite(total);
 });
