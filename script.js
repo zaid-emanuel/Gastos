@@ -52,6 +52,8 @@ function renderizarGastos() {
     listaGastos.appendChild(li);
   });
   calcularTotal();
+  calcularTotal();
+  renderizarGrafica();
 }
 
 function agregarGasto() {
@@ -66,4 +68,35 @@ function agregarGasto() {
   inputDescripcion.value = '';
   inputMonto.value = '';
   renderizarGastos();
+}
+
+const contenedorGrafica = document.getElementById('grafica-barras');
+
+function renderizarGrafica() {
+  contenedorGrafica.innerHTML = '';
+
+  const totalesPorCategoria = {};
+  gastos.forEach((gasto) => {
+    totalesPorCategoria[gasto.categoria] = (totalesPorCategoria[gasto.categoria] || 0) + gasto.monto;
+  });
+
+  const montoMaximo = Math.max(...Object.values(totalesPorCategoria), 1);
+
+  Object.entries(totalesPorCategoria).forEach(([categoria, monto]) => {
+    const fila = document.createElement('div');
+    fila.classList.add('barra-fila');
+
+    const etiqueta = document.createElement('span');
+    etiqueta.classList.add('barra-etiqueta');
+    etiqueta.textContent = `${categoria} ($${monto.toFixed(2)})`;
+
+    const barra = document.createElement('div');
+    barra.classList.add('barra');
+    barra.style.width = `${(monto / montoMaximo) * 100}%`;
+
+    fila.appendChild(etiqueta);
+    fila.appendChild(barra);
+    contenedorGrafica.appendChild(fila);
+  });
+  
 }
