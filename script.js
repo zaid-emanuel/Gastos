@@ -8,6 +8,8 @@ const listaGastos = document.getElementById('lista-gastos');
 const totalTexto = document.getElementById('total');
 const contenedorGrafica = document.getElementById('grafica-barras');
 const botonesFiltro = document.querySelectorAll('[data-filtro]');
+const inputLimite = document.getElementById('limite');
+const mensajeLimite = document.getElementById('mensaje-limite');
 
 // ===== Estado de la aplicación =====
 let gastos = [];
@@ -47,6 +49,31 @@ function obtenerGastosFiltrados() {
 function calcularTotal(gastosVisibles) {
   const total = gastosVisibles.reduce((suma, gasto) => suma + gasto.monto, 0);
   totalTexto.textContent = `Total: $${total.toFixed(2)}`;
+
+  // Pequeño "pulso" visual en el total cada vez que cambia
+  totalTexto.classList.remove('total-actualizado');
+  void totalTexto.offsetWidth; // fuerza el reinicio de la animación
+  totalTexto.classList.add('total-actualizado');
+
+  return total;
+}
+
+function verificarLimite(totalActual) {
+  const limite = parseFloat(inputLimite.value);
+
+  if (isNaN(limite) || limite <= 0) {
+    mensajeLimite.textContent = '';
+    mensajeLimite.classList.remove('limite-excedido');
+    return;
+  }
+
+  if (totalActual > limite) {
+    mensajeLimite.textContent = `Has excedido tu límite mensual por $${(totalActual - limite).toFixed(2)}`;
+    mensajeLimite.classList.add('limite-excedido');
+  } else {
+    mensajeLimite.textContent = `Disponible: $${(limite - totalActual).toFixed(2)}`;
+    mensajeLimite.classList.remove('limite-excedido');
+  }
 }
 
 function renderizarGrafica(gastosVisibles) {
@@ -92,8 +119,39 @@ function renderizarGastos() {
     listaGastos.appendChild(li);
   });
 
-  calcularTotal(gastosVisibles);
+  const total = calcularTotal(gastosVisibles);
   renderizarGrafica(gastosVisibles);
+  verificarLimite(total);
+}
+
+// Crea monedas/billetes que "vuelan" desde el botón de agregar
+function animarMonedas() {
+  const simbolos = ['🪙', '💵', '💰'];
+  const cantidadMonedas = 6;
+  const posicionBoton = botonAgregar.getBoundingClientRect();
+
+  for (let i = 0; i < cantidadMonedas; i++) {
+    const moneda = document.createElement('span');
+    moneda.classList.add('moneda-flotante');
+    moneda.textContent = simbolos[Math.floor(Math.random() * simbolos.length)];
+
+    // Posición inicial: centro del botón
+    moneda.style.left = `${posicionBoton.left + posicionBoton.width / 2}px`;
+    moneda.style.top = `${posicionBoton.top}px`;
+
+    // Desplazamiento horizontal y rotación aleatorios para que no salgan todas iguales
+    const desplazamientoX = (Math.random() - 0.5) * 120;
+    const rotacion = (Math.random() - 0.5) * 180;
+    moneda.style.setProperty('--desplazamiento-x', `${desplazamientoX}px`);
+    moneda.style.setProperty('--rotacion', `${rotacion}deg`);
+
+    document.body.appendChild(moneda);
+
+    // Elimina la moneda del DOM al terminar la animación
+    moneda.addEventListener('animationend', () => {
+      moneda.remove();
+    });
+  }
 }
 
 function agregarGasto() {
@@ -110,6 +168,7 @@ function agregarGasto() {
   inputMonto.value = '';
   inputFecha.value = '';
   renderizarGastos();
+  animarMonedas();
 }
 
 // ===== Eventos =====
@@ -120,4 +179,10 @@ botonesFiltro.forEach((boton) => {
     filtroActivo = boton.dataset.filtro;
     renderizarGastos();
   });
+});
+
+inputLimite.addEventListener('input', () => {
+  const gastosVisibles = obtenerGastosFiltrados();
+  const total = calcularTotal(gastosVisibles);
+  verificarLimite(total);
 });
