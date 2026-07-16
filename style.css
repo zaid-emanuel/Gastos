@@ -129,7 +129,8 @@ h1 {
 }
 
 .barra {
-  height: 16px;
-  background: #4facfe;
+  height: 18px;
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
   border-radius: 6px;
+  transition: width 0.4s ease;
 }
