@@ -52,6 +52,28 @@ h1 {
   cursor: pointer;
 }
 
+.filtros {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.filtros button {
+  padding: 8px 12px;
+  border: 1px solid #4facfe;
+  background: white;
+  color: #4facfe;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.filtros button:hover {
+  background: #4facfe;
+  color: white;
+}
+
 #lista-gastos {
   list-style: none;
 }

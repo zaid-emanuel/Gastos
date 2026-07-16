@@ -7,21 +7,50 @@ const botonAgregar = document.getElementById('btn-agregar');
 const listaGastos = document.getElementById('lista-gastos');
 const totalTexto = document.getElementById('total');
 const contenedorGrafica = document.getElementById('grafica-barras');
+const botonesFiltro = document.querySelectorAll('[data-filtro]');
 
 // ===== Estado de la aplicación =====
 let gastos = [];
+let filtroActivo = 'todos';
 
 // ===== Funciones =====
-function calcularTotal() {
-  const total = gastos.reduce((suma, gasto) => suma + gasto.monto, 0);
+function obtenerGastosFiltrados() {
+  const hoy = new Date();
+
+  if (filtroActivo === 'todos') return gastos;
+
+  return gastos.filter((gasto) => {
+    const fechaGasto = new Date(gasto.fecha);
+
+    if (filtroActivo === 'hoy') {
+      // Compara el objeto Date completo (incluye horas/minutos),
+      // por lo que "hoy" casi nunca coincide exactamente.
+      return fechaGasto === hoy;
+    }
+
+    if (filtroActivo === 'semana') {
+      // Resta 7 días fijos sin considerar el día de la semana actual.
+      const haceSieteDias = new Date(hoy.getTime() - 7 * 24 * 60 * 60 * 1000);
+      return fechaGasto > haceSieteDias;
+    }
+
+    if (filtroActivo === 'mes') {
+      // Compara solo el número de mes, sin considerar el año.
+      return fechaGasto.getMonth() === hoy.getMonth();
+    }
+  });
+}
+
+function calcularTotal(gastosVisibles) {
+  const total = gastosVisibles.reduce((suma, gasto) => suma + gasto.monto, 0);
   totalTexto.textContent = `Total: $${total.toFixed(2)}`;
 }
 
-function renderizarGrafica() {
+function renderizarGrafica(gastosVisibles) {
   contenedorGrafica.innerHTML = '';
 
   const totalesPorCategoria = {};
-  gastos.forEach((gasto) => {
+  gastosVisibles.forEach((gasto) => {
     totalesPorCategoria[gasto.categoria] = (totalesPorCategoria[gasto.categoria] || 0) + gasto.monto;
   });
 
@@ -47,7 +76,9 @@ function renderizarGrafica() {
 
 function renderizarGastos() {
   listaGastos.innerHTML = '';
-  gastos.forEach((gasto) => {
+  const gastosVisibles = obtenerGastosFiltrados();
+
+  gastosVisibles.forEach((gasto) => {
     const li = document.createElement('li');
     li.innerHTML = `
       <span>${gasto.descripcion}</span>
@@ -57,8 +88,9 @@ function renderizarGastos() {
     `;
     listaGastos.appendChild(li);
   });
-  calcularTotal();
-  renderizarGrafica();
+
+  calcularTotal(gastosVisibles);
+  renderizarGrafica(gastosVisibles);
 }
 
 function agregarGasto() {
@@ -79,3 +111,10 @@ function agregarGasto() {
 
 // ===== Eventos =====
 botonAgregar.addEventListener('click', agregarGasto);
+
+botonesFiltro.forEach((boton) => {
+  boton.addEventListener('click', () => {
+    filtroActivo = boton.dataset.filtro;
+    renderizarGastos();
+  });
+});
