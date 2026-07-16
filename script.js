@@ -35,3 +35,35 @@ function agregarGasto() {
 }
 
 botonAgregar.addEventListener('click', agregarGasto);
+
+const inputCategoria = document.getElementById('categoria');
+
+// ... (mantén lo anterior)
+
+function renderizarGastos() {
+  listaGastos.innerHTML = '';
+  gastos.forEach((gasto) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span>${gasto.descripcion}</span>
+      <span class="etiqueta-categoria">${gasto.categoria}</span>
+      <span>$${gasto.monto.toFixed(2)}</span>
+    `;
+    listaGastos.appendChild(li);
+  });
+  calcularTotal();
+}
+
+function agregarGasto() {
+  const descripcion = inputDescripcion.value.trim();
+  const monto = parseFloat(inputMonto.value);
+  const categoria = inputCategoria.value;
+
+  if (descripcion === '' || isNaN(monto) || monto <= 0) return;
+
+  gastos.push({ descripcion, monto, categoria });
+
+  inputDescripcion.value = '';
+  inputMonto.value = '';
+  renderizarGastos();
+}

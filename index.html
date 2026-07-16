@@ -23,6 +23,18 @@
   <ul id="lista-gastos"></ul>
 
   <p id="total">Total: $0.00</p>
+  <section class="gasto-form">
+  <input type="text" id="descripcion" placeholder="Descripción del gasto">
+  <input type="number" id="monto" placeholder="Monto" min="0" step="0.01">
+  <select id="categoria">
+    <option value="Comida">Comida</option>
+    <option value="Transporte">Transporte</option>
+    <option value="Entretenimiento">Entretenimiento</option>
+    <option value="Salud">Salud</option>
+    <option value="Otros">Otros</option>
+  </select>
+  <button id="btn-agregar">Agregar Gasto</button>
+</section>
 </div>
 </body>
 </html>
