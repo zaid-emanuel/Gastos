@@ -16,27 +16,30 @@ let filtroActivo = 'todos';
 // ===== Funciones =====
 function obtenerGastosFiltrados() {
   const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
 
   if (filtroActivo === 'todos') return gastos;
 
   return gastos.filter((gasto) => {
     const fechaGasto = new Date(gasto.fecha);
+    fechaGasto.setHours(0, 0, 0, 0);
 
     if (filtroActivo === 'hoy') {
-      // Compara el objeto Date completo (incluye horas/minutos),
-      // por lo que "hoy" casi nunca coincide exactamente.
-      return fechaGasto === hoy;
+      return fechaGasto.getTime() === hoy.getTime();
     }
 
     if (filtroActivo === 'semana') {
-      // Resta 7 días fijos sin considerar el día de la semana actual.
-      const haceSieteDias = new Date(hoy.getTime() - 7 * 24 * 60 * 60 * 1000);
-      return fechaGasto > haceSieteDias;
+      const diaSemana = hoy.getDay() === 0 ? 7 : hoy.getDay(); // Lunes=1 ... Domingo=7
+      const inicioSemana = new Date(hoy);
+      inicioSemana.setDate(hoy.getDate() - (diaSemana - 1));
+      return fechaGasto >= inicioSemana && fechaGasto <= hoy;
     }
 
     if (filtroActivo === 'mes') {
-      // Compara solo el número de mes, sin considerar el año.
-      return fechaGasto.getMonth() === hoy.getMonth();
+      return (
+        fechaGasto.getMonth() === hoy.getMonth() &&
+        fechaGasto.getFullYear() === hoy.getFullYear()
+      );
     }
   });
 }
