@@ -11,5 +11,18 @@
     <h1>Control de Gastos</h1>
   </div>
   <script src="script.js"></script>
+  <div class="app-container">
+  <h1>Control de Gastos</h1>
+
+  <section class="gasto-form">
+    <input type="text" id="descripcion" placeholder="Descripción del gasto">
+    <input type="number" id="monto" placeholder="Monto" min="0" step="0.01">
+    <button id="btn-agregar">Agregar Gasto</button>
+  </section>
+
+  <ul id="lista-gastos"></ul>
+
+  <p id="total">Total: $0.00</p>
+</div>
 </body>
 </html>
