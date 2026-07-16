@@ -1,0 +1,113 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  background: #f4f6f9;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 500px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.gasto-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.gasto-form input,
+.gasto-form select {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+#btn-agregar {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #4facfe;
+  color: white;
+  cursor: pointer;
+}
+
+#lista-gastos {
+  list-style: none;
+}
+
+#lista-gastos li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.etiqueta-categoria {
+  font-size: 0.75rem;
+  background: #eef2f7;
+  color: #555;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.etiqueta-fecha {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+#total {
+  margin-top: 16px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.resumen-grafico {
+  margin-top: 24px;
+}
+
+.resumen-grafico h2 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.barra-fila {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.barra-etiqueta {
+  min-width: 140px;
+  font-size: 0.8rem;
+}
+
+.barra {
+  height: 16px;
+  background: #4facfe;
+  border-radius: 6px;
+}
