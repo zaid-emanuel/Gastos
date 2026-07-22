@@ -17,8 +17,11 @@ let filtroActivo = 'todos';
 let limiteYaExcedido = false; // evita repetir el sonido de alerta en cada tecla
 
 // ===== Sonidos (Web Audio API, sin archivos externos) =====
-function reproducirSonido(frecuencia = 440, duracion = 0.15, tipoOnda = 'sine') {
-  const contextoAudio = new (window.AudioContext || window.webkitAudioContext)();
+// Se reutiliza un solo contexto de audio en vez de crear uno nuevo cada vez,
+// lo cual además evita cortes o retrasos entre sonidos.
+const contextoAudio = new (window.AudioContext || window.webkitAudioContext)();
+
+function reproducirTono(frecuencia, duracion, tipoOnda, volumen, retraso = 0) {
   const oscilador = contextoAudio.createOscillator();
   const ganancia = contextoAudio.createGain();
 
@@ -27,19 +30,26 @@ function reproducirSonido(frecuencia = 440, duracion = 0.15, tipoOnda = 'sine') 
   oscilador.connect(ganancia);
   ganancia.connect(contextoAudio.destination);
 
-  ganancia.gain.setValueAtTime(0.15, contextoAudio.currentTime);
-  ganancia.gain.exponentialRampToValueAtTime(0.001, contextoAudio.currentTime + duracion);
+  const inicio = contextoAudio.currentTime + retraso;
 
-  oscilador.start();
-  oscilador.stop(contextoAudio.currentTime + duracion);
+  ganancia.gain.setValueAtTime(0, inicio);
+  ganancia.gain.linearRampToValueAtTime(volumen, inicio + 0.02);
+  ganancia.gain.exponentialRampToValueAtTime(0.001, inicio + duracion);
+
+  oscilador.start(inicio);
+  oscilador.stop(inicio + duracion);
 }
 
+// Sonido de "caja registradora": dos notas ascendentes, más fuerte y notorio
 function sonidoAgregarGasto() {
-  reproducirSonido(660, 0.12, 'sine');
+  reproducirTono(523, 0.15, 'triangle', 0.35, 0);     // Do
+  reproducirTono(784, 0.22, 'triangle', 0.35, 0.08);  // Sol
 }
 
+// Sonido de alerta: dos tonos graves en "square" para que se sienta como aviso
 function sonidoAlertaLimite() {
-  reproducirSonido(220, 0.25, 'square');
+  reproducirTono(300, 0.18, 'square', 0.3, 0);
+  reproducirTono(220, 0.3, 'square', 0.3, 0.15);
 }
 
 // ===== Funciones =====
@@ -98,7 +108,6 @@ function verificarLimite(totalActual) {
     mensajeLimite.textContent = `Has excedido tu límite mensual por $${(totalActual - limite).toFixed(2)}`;
     mensajeLimite.classList.add('limite-excedido');
 
-    // Solo suena la alerta la primera vez que se excede, no en cada actualización
     if (!limiteYaExcedido) {
       sonidoAlertaLimite();
       limiteYaExcedido = true;
